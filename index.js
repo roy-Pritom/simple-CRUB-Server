@@ -40,6 +40,13 @@ async function run() {
         res.send(result);
       })
   
+    app.get('/user/:id',async(req,res)=>{
+    const id=req.params.id;
+    const query={_id:new ObjectId(id)}
+    const user=await userCollection.findOne(query)
+    res.send(user)
+    })
+
       app.post('/user',async(req,res)=>{
           const user=req.body;
           console.log(user);
@@ -48,6 +55,21 @@ async function run() {
   
           res.send(result)
       });
+
+      app.put('/user/:id',async(req,res)=>{
+        const user=req.body;
+        const id=req.params.id;
+        const filter={_id:new ObjectId(id)}
+        const options={upsert:true}
+        const updateUser={
+            $set:{
+                 name:user.name,
+                 email:user.email
+            }
+        }
+        const result=await userCollection.updateOne(filter,updateUser,options)
+        res.send(result);
+      })
 
       app.delete('/user/:id',async(req,res)=>{
         const id=req.params.id;
